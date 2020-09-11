@@ -63,7 +63,7 @@ export default class LoginScreen extends React.Component<LoginScreenProps, Login
             value={this.state.user.uname}
           />
           <ImageContainer>
-            <LoginImg source={require('@assets/imgs/colored_icon.png')} resizeMode="center" />
+            <LoginImg source={require('@assets/imgs/colored_icon.png')} resizeMode="contain" />
           </ImageContainer>
           <LoginText>Password</LoginText>
           <LoginInput
