@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View } from 'react-native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { GlobalContext } from '@components/ContextProvider';
@@ -9,6 +9,7 @@ import { getJobs, updateJob } from '@utils/airtable/requests';
 import { Status } from '../StatusScreen/StatusScreen';
 import ContactsModal from '@components/ContactsModal/ContactsModal';
 import { StatusController } from '@screens/StatusScreen/StatusController';
+
 
 // BWBP
 import { Overlay, CheckBox, Button } from 'react-native-elements';
@@ -98,17 +99,35 @@ export class JobsScreen extends React.Component<JobsScreenProps, JobsScreenState
   };
 
   /**
-   * TODO: Write filterJobs function that updates the components' state with jobs that align with the users' weekly schedule.
+   * TODO: Write a function that updates the components' state with jobs that align with the users' weekly schedule.
    */
+
+  findAvailableDays (availability: Availability){
+    var availDays: string[];
+    availDays = [];
+    function capitaliseFirst(string){
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+    for (const [day, avail] of Object.entries(availability)){
+      if (avail){
+        availDays.push(capitaliseFirst(day));//day);
+      }
+    }
+    return availDays;
+  };
+
   filterJobs = (jobs: JobRecord[], availability: Availability): void => {
     // Step 0: Clone the jobs input
-    const newJobs: JobRecord[] = cloneDeep(jobs);
-    console.log(newJobs, availability);
+    //const newJobs: JobRecord[] = cloneDeep(jobs);
+    //console.log(newJobs, availability);
+    const availDays = this.findAvailableDays(availability);
 
     // Step 1: Remove jobs where the schedule doesn't align with the users' availability.
+    const filteredJobs = jobs.filter(({schedule}) => schedule.every(day => availDays.includes(day)));
 
     // Step 2: Save into state
-    this.setState({ jobs: newJobs });
+    //this.setState({ jobs: newJobs });
+    this.setState({ jobs: filteredJobs});
   };
 
   getStatus = (jobs: JobRecord[]): Status => {
